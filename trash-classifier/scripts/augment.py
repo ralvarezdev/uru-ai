@@ -1,9 +1,9 @@
 import os
+import shutil
 from time import time
 import cv2
 import albumentations as A
 from scripts import NUM_AUGMENTATIONS, MODEL_CLASSES, DATASET_RESIZED, DATASET_AUGMENTED, IMAGE_EXTENSIONS
-
 
 def augment_image(input_path, output_dir, image_filename, num_augmentations):
     """
@@ -79,6 +79,9 @@ def augment_dataset(num_augmentations=NUM_AUGMENTATIONS):
             # Get the image paths
             input_image_path = os.path.join(input_dir, image_filename)
             augment_image(input_image_path, output_dir, image_filename, num_augmentations)
+
+    # Remove the resized dataset directory
+    shutil.rmtree(DATASET_RESIZED)
 
 def main():
     """
