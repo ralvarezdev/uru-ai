@@ -1,0 +1,13 @@
+path: ../datasets/coco8 # dataset root dir (absolute or relative; if relative, it's relative to default datasets_dir)
+train: images/train # train images (relative to 'path') 4 images
+val: images/val # val images (relative to 'path') 4 images
+test: # test images (optional)
+
+# Classes
+names:
+    0: cardboard
+    1: glass
+    2: metal
+    3: paper
+    4: plastic
+    5: trash
