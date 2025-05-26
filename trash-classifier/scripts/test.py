@@ -2,7 +2,10 @@ import streamlit as st
 from PIL import Image
 import numpy as np
 from ultralytics import YOLO
+import sys
+import os
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from scripts import RUNS_WEIGHTS_BEST_PT
 
 
@@ -34,8 +37,14 @@ def main():
         # Perform inference
         results = model(image_np)
 
-        # Display the classification results
-        st.write("Detection Results: " + results)
+        # Get the predicted class
+        if results[0].probs is not None:
+            predicted_index = np.argmax(results[0].probs.data).item()
+            print(f"Predicted Index: {predicted_index}")
+            predicted_class = model.names[predicted_index]
+            st.write(f"Predicted Class: {predicted_class}")
+        else:
+            st.write("No predictions were made.")
 
 if __name__ == "__main__":
     main()
