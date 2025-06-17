@@ -1,11 +1,8 @@
-import argparse
 import random
 import os
-import shutil
-from typing import LiteralString
+from shutil import rmtree, copy
 
-from scripts import MODEL_CLASSES, DATASET_AUGMENTED, DATASET_ORGANIZED, DATASET_ORGANIZED_TRAINING, \
-    DATASET_ORGANIZED_VALIDATIONS, DATASET_ORGANIZED_TESTING
+from .files import Files
 
 
 def split_dataset(train_ratio=0.7,
@@ -13,12 +10,12 @@ def split_dataset(train_ratio=0.7,
     """
     Split the dataset into training, validation, and testing sets.
     """
-    for _, model_class in enumerate(MODEL_CLASSES):
+    for _, model_class in enumerate(Files.MODEL_CLASSES):
         # Get the input and output directories
-        input_dir = os.path.join(DATASET_AUGMENTED, model_class)
-        output_training_dir = os.path.join(DATASET_ORGANIZED_TRAINING, model_class)
-        output_validations_dir = os.path.join(DATASET_ORGANIZED_VALIDATIONS, model_class)
-        output_testing_dir = os.path.join(DATASET_ORGANIZED_TESTING, model_class)
+        input_dir = os.path.join(Files.DATASET_AUGMENTED, model_class)
+        output_training_dir = os.path.join(Files.DATASET_ORGANIZED_TRAINING, model_class)
+        output_validations_dir = os.path.join(Files.DATASET_ORGANIZED_VALIDATIONS, model_class)
+        output_testing_dir = os.path.join(Files.DATASET_ORGANIZED_TESTING, model_class)
 
         for io_dir in [input_dir, output_training_dir, output_validations_dir, output_testing_dir]:
             # Ensure the input and output directories exist
@@ -42,17 +39,17 @@ def split_dataset(train_ratio=0.7,
             input_image_path = os.path.join(input_dir, image_filename)
 
             if i < train_split:
-                shutil.copy(input_image_path, output_training_dir)
+                copy(input_image_path, output_training_dir)
             elif i < train_split + val_split:
-                shutil.copy(input_image_path, output_validations_dir)
+                copy(input_image_path, output_validations_dir)
             else:
-                shutil.copy(input_image_path, output_testing_dir)
+                copy(input_image_path, output_testing_dir)
 
             # Log
             print(f'Copied {image_filename} to the respective directories')
 
     # Remove the augmented dataset
-    shutil.rmtree(DATASET_AUGMENTED)
+    rmtree(Files.DATASET_AUGMENTED)
 
 def main() -> None:
     """

@@ -1,8 +1,8 @@
 import os
 from time import time
 import cv2
-import albumentations as A
-from scripts import MODEL_CLASSES, DATASET_RESIZED, IMAGE_EXTENSIONS, DATASET_ORIGINAL, IMAGE_SIZE
+
+from .files import Files
 
 
 def resize_image(input_path, output_dir, image_filename):
@@ -17,7 +17,7 @@ def resize_image(input_path, output_dir, image_filename):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     # Resize the image
-    image = cv2.resize(image, (IMAGE_SIZE, IMAGE_SIZE))
+    image = cv2.resize(image, (Files.IMAGE_SIZE, Files.IMAGE_SIZE))
 
     # Convert the image back to BGR and save it
     output_path = os.path.join(output_dir, image_filename)
@@ -34,13 +34,13 @@ def resize_dataset():
     Resize a dataset.
     """
     # Check if the dataset directories exist, if not it creates them
-    for io_dir in [DATASET_ORIGINAL, DATASET_RESIZED]:
+    for io_dir in [Files.DATASET_ORIGINAL, Files.DATASET_RESIZED]:
         os.makedirs(io_dir, exist_ok=True)
 
-    for _, model_class in enumerate(MODEL_CLASSES):
+    for _, model_class in enumerate(Files.MODEL_CLASSES):
         # Get the input and output directories
-        input_dir = os.path.join(DATASET_ORIGINAL, model_class)
-        output_dir = os.path.join(DATASET_RESIZED, model_class)
+        input_dir = os.path.join(Files.DATASET_ORIGINAL, model_class)
+        output_dir = os.path.join(Files.DATASET_RESIZED, model_class)
 
         # Ensure the input and output directories exist
         for io_dir in [input_dir, output_dir]:
@@ -48,7 +48,7 @@ def resize_dataset():
 
         # Get the image files
         image_filenames = [f for f in os.listdir(input_dir) if
-                           f.lower().endswith(IMAGE_EXTENSIONS)]
+                           f.lower().endswith(Files.IMAGE_EXTENSIONS)]
 
         # Augment each image
         for image_filename in image_filenames:

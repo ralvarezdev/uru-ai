@@ -6,7 +6,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from scripts import RUNS_WEIGHTS_BEST_PT
+from .files import Files
 
 
 @st.cache_resource
@@ -14,7 +14,7 @@ def load_model():
     """
     Load the YOLO model.
     """
-    model = YOLO(RUNS_WEIGHTS_BEST_PT)
+    model = YOLO(Files.RUNS_WEIGHTS_BEST_PT)
     return model
 
 def main():

@@ -1,9 +1,10 @@
 import os
-import shutil
+from shutil import rmtree
 from time import time
 import cv2
 import albumentations as A
-from scripts import NUM_AUGMENTATIONS, MODEL_CLASSES, DATASET_RESIZED, DATASET_AUGMENTED, IMAGE_EXTENSIONS
+
+from .files import Files
 
 def augment_image(input_path, output_dir, image_filename, num_augmentations):
     """
@@ -51,18 +52,18 @@ def augment_image(input_path, output_dir, image_filename, num_augmentations):
         print(f"Augmented image saved to {output_path} in {elapsed_time:.2f} seconds")
 
 
-def augment_dataset(num_augmentations=NUM_AUGMENTATIONS):
+def augment_dataset(num_augmentations = Files.NUM_AUGMENTATIONS):
     """
     Augment a dataset.
     """
     # Check if the dataset directories exist, if not it creates them
-    for io_dir in [DATASET_RESIZED, DATASET_AUGMENTED]:
+    for io_dir in [Files.DATASET_RESIZED, Files.DATASET_AUGMENTED]:
         os.makedirs(io_dir, exist_ok=True)
 
-    for _, model_class in enumerate(MODEL_CLASSES):
+    for _, model_class in enumerate(Files.MODEL_CLASSES):
         # Get the input and output directories
-        input_dir = os.path.join(DATASET_RESIZED, model_class)
-        output_dir = os.path.join(DATASET_AUGMENTED, model_class)
+        input_dir = os.path.join(Files.DATASET_RESIZED, model_class)
+        output_dir = os.path.join(Files.DATASET_AUGMENTED, model_class)
 
         # Ensure the input and output directories exist
         for io_dir in [input_dir, output_dir]:
@@ -70,7 +71,7 @@ def augment_dataset(num_augmentations=NUM_AUGMENTATIONS):
 
         # Get the image files
         image_filenames = [f for f in os.listdir(input_dir) if
-                           f.lower().endswith(IMAGE_EXTENSIONS)]
+                           f.lower().endswith(Files.IMAGE_EXTENSIONS)]
 
         # Augment each image
         for image_filename in image_filenames:
@@ -81,7 +82,7 @@ def augment_dataset(num_augmentations=NUM_AUGMENTATIONS):
             augment_image(input_image_path, output_dir, image_filename, num_augmentations)
 
     # Remove the resized dataset directory
-    shutil.rmtree(DATASET_RESIZED)
+    rmtree(Files.DATASET_RESIZED)
 
 def main():
     """
