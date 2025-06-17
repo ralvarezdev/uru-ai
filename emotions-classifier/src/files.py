@@ -1,6 +1,6 @@
 import os
 
-from .lib.files import Files as F
+from lib.files import Files as F
 
 class Files(F):
     """

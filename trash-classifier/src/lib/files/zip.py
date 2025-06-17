@@ -3,8 +3,8 @@ from zipfile import ZipFile
 from re import Pattern
 from typing import Optional
 
-from . import Files
-from ..utils import match_any
+from lib.files import Files
+from lib.utils import match_any
 
 
 class Zip:

@@ -2,7 +2,7 @@ import os
 from time import time
 import cv2
 
-from .files import Files
+from files import Files
 
 
 def resize_image(input_path, output_dir, image_filename):

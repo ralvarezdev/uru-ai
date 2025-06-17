@@ -3,7 +3,7 @@ echo Activating virtual environment...
 call .\.venv\Scripts\activate
 
 echo Running Streamlit app...
-call streamlit run scripts/test.py
+call streamlit run src\test.py
 
 echo Streamlit app has stopped.
 pause

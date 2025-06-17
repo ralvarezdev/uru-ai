@@ -4,8 +4,8 @@ import zipfile
 
 from typing_extensions import LiteralString
 
-from .lib.files.zip import Zip
-from .files import Files
+from lib.files.zip import Zip
+from files import Files
 
 def zip_to_train(input_dir: LiteralString, input_yolo_dataset_organized_dir: LiteralString,
                  output_zip_dir: LiteralString) -> None:

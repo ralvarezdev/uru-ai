@@ -3,7 +3,7 @@ from time import time
 import cv2
 import albumentations as A
 
-from .files import Files
+from files import Files
 
 def augment_image(input_path, output_dir, image_filename, num_augmentations):
     """

@@ -2,7 +2,7 @@ import random
 import os
 from shutil import rmtree, copy
 
-from .files import Files
+from files import Files
 
 
 def split_dataset(train_ratio=0.7,
