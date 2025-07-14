@@ -3,7 +3,13 @@ import os
 from fpdf import FPDF
 import pandas as pd
 
-from constants import SALES_XLSX, DATA_DIR
+from constants import (
+    SALES_XLSX,
+    DATA_DIR,
+    FIRA_CODE_REGULAR,
+    FIRA_CODE_BOLD,
+    FONTS_DIR
+)
 
 # Load the Excel file
 data = pd.read_excel(SALES_XLSX, engine="openpyxl")
@@ -23,11 +29,14 @@ top_counts = {}
 for column, counts in columns_counts.items():
     top_counts[column] = counts.head(5)
 
+# Remove hour from 'Fecha' column
+data['Fecha'] = data['Fecha'].dt.date
+
 def generate_summary():
     """
     Function to generate a summary of the sales data.
     """
-    summary = {
+    return {
         "Ventas por segmento": segment_counts.to_dict(),
         "Top 5 Canales con mayor cantidad de ventas": top_counts[
             'Canal'].to_dict(),
@@ -40,37 +49,52 @@ def generate_summary():
             'Vendedor'].to_dict()
     }
 
-    return summary
-
-def generate_pdf(file_name: str, summary: dict):
+def generate_pdf(
+    file_name: str,
+    summary: dict,
+    fonts_dir=FONTS_DIR,
+    output_dir=DATA_DIR
+):
     """
     Function to generate a PDF report from the summary data.
 
     Args:
         file_name (str): The name of the output PDF file.
         summary (dict): A dictionary containing the summary data to include in the PDF.
+        fonts_dir (str): The directory where the font files are located.
+        output_dir (str): The directory where the PDF file will be saved.
     """
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+
+    # Add the Fira Code font
+    if fonts_dir:
+        os.chdir(fonts_dir)
+    pdf.add_font('Fira Code', '', FIRA_CODE_REGULAR, uni=True)
+    pdf.add_font('Fira Code', 'B', FIRA_CODE_BOLD, uni=True)
+
+    # Set the font to Fira Code
+    pdf.set_font("Fira Code", size=12)
 
     # Add a title
-    pdf.set_font("Arial", style="B", size=16)
+    pdf.set_font("Fira Code", style="B", size=16)
     pdf.cell(0, 10, "Reporte de Ventas", ln=True, align="C")
     pdf.ln(10)  # Add a line break
 
     # Add content
-    pdf.set_font("Arial", size=12)
+    pdf.set_font("Fira Code", size=12)
     for section, data in summary.items():
-        pdf.set_font("Arial", style="B", size=12)
+        pdf.set_font("Fira Code", style="B", size=12)
         pdf.cell(0, 10, section, ln=True)
-        pdf.set_font("Arial", size=12)
+        pdf.set_font("Fira Code", size=12)
         for key, value in data.items():
-            pdf.cell(0, 10, f"{key}: {value}", ln=True)
+            pdf.cell(0, 5, f"{key}: {value}", ln=True)
         pdf.ln(5)  # Add a line break between sections
 
     # Save the PDF
+    if output_dir:
+        os.chdir(output_dir)
     pdf.output(file_name)
 
 # Change current working directory to data
