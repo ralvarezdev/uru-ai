@@ -18,3 +18,7 @@
 /yolo/runs/**/*
 /yolo/zip/**/*
 /yolo/**/*.zip
+
+# Environment variables
+/.env
+/**/*/.env
