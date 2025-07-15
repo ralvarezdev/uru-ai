@@ -1,14 +1,17 @@
 import os
 
-from fpdf import FPDF
 import pandas as pd
 
+from pdf import PDF
 from constants import (
     SALES_XLSX,
     DATA_DIR,
     FIRA_CODE_REGULAR,
     FIRA_CODE_BOLD,
-    FONTS_DIR
+    FONTS_DIR,
+    DISPLAY_WIDTH_PX,
+    DISPLAY_HEIGHT_PX,
+    DISPLAY_DIAGONAL_INCH,
 )
 
 # Load the Excel file
@@ -136,33 +139,24 @@ def generate_pdf(
         fonts_dir (str): The directory where the font files are located.
         output_dir (str): The directory where the PDF file will be saved.
     """
-    pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf = PDF()
     pdf.add_page()
 
     # Add the Fira Code font
     if fonts_dir:
         os.chdir(fonts_dir)
-    pdf.add_font('Fira Code', '', FIRA_CODE_REGULAR, uni=True)
-    pdf.add_font('Fira Code', 'B', FIRA_CODE_BOLD, uni=True)
-
-    # Set the font to Fira Code
-    pdf.set_font("Fira Code", size=12)
+    pdf.add_font('Fira Code', '', FIRA_CODE_REGULAR, uni=True, set_as_main=True)
+    pdf.add_font('Fira Code', 'B', FIRA_CODE_BOLD, uni=True, set_as_main=True)
 
     # Add a title
-    pdf.set_font("Fira Code", style="B", size=16)
-    pdf.cell(0, 10, "Reporte de Ventas", ln=True, align="C")
-    pdf.ln(10)  # Add a line break
+    pdf.h1("Reporte de Ventas", align="C")
 
     # Add content
-    pdf.set_font("Fira Code", size=12)
     for section, data in summary.items():
-        pdf.set_font("Fira Code", style="B", size=12)
-        pdf.cell(0, 10, section, ln=True)
-        pdf.set_font("Fira Code", size=12)
+        pdf.h2(section)
         for key, value in data.items():
-            pdf.cell(0, 5, f"{key}: {value}", ln=True)
-        pdf.ln(5)  # Add a line break between sections
+            pdf.text(f"{key}: {value}", newline=False)
+        pdf.newline()
 
     # Save the PDF
     if output_dir:
@@ -174,3 +168,31 @@ os.chdir(DATA_DIR)
 
 summary = generate_summary()
 generate_pdf("sales_report.pdf", summary)
+
+# Table data
+"""
+header = ["Name", "Age", "City"]
+data = [
+    ["Alice", 25, "New York"],
+    ["Bob", 30, "Los Angeles"],
+    ["Charlie", 35, "Chicago"]
+]
+
+# Set column widths
+col_widths = [40, 30, 50]
+row_height = 10
+
+# Add the header row
+for i, col_name in enumerate(header):
+    pdf.cell(col_widths[i], row_height, col_name, border=1, align="C")
+pdf.ln(row_height)  # Move to the next line
+
+# Add the data rows
+for row in data:
+    for i, cell in enumerate(row):
+        pdf.cell(col_widths[i], row_height, str(cell), border=1, align="C")
+    pdf.ln(row_height)  # Move to the next line
+
+# Save the PDF
+pdf.output("table_example.pdf")
+"""
