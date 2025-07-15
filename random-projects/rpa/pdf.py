@@ -610,7 +610,7 @@ class PDF:
         border: int = 0,
         align: str = '',
         fill: bool = False,
-        tabs: int|None = None
+        tabs: int|None = 1
     ):
         """
         Add a level 3 heading to the PDF document.
