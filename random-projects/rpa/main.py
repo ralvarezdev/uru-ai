@@ -35,13 +35,14 @@ if __name__ == '__main__':
     generate_pdf("sales_report.pdf", summary)
 
     # Upload the PDF to GoFile.io
-    page_link, direct_link = upload_to_gofile(SALES_REPORT_PDF)
+    page_link, server, file_id, filename = upload_to_gofile(SALES_REPORT_PDF)
 
     # Initialize Twilio client
     client = Client(account_sid, auth_token)
 
     # Generate the proxy URL for the PDF
-    proxy_url = f"{proxy_server_url}/proxy?url={direct_link}"
+    proxy_url = f"{proxy_server_url}/proxy?server={server}&file_id={file_id}&filename={filename}"
+    print(proxy_url)
 
     # Send a WhatsApp message
     message = client.send_whatsapp_message(

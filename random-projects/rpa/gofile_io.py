@@ -21,8 +21,6 @@ def upload_to_gofile(file_path):
     if response['status'] == 'ok':
         data = response['data']
         page_link = data['downloadPage']
-        direct_link = (f"https://{data['servers'][0]}.gofile.io/download/"
-                       f"{data['id']}/{data['name']}")
-        return [page_link, direct_link]
+        return [page_link, data['servers'][0], data['id'], data['name']]
     else:
         raise Exception(f"Upload failed: {response}")
