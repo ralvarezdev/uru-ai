@@ -15,7 +15,10 @@ def generate_summary(
     top_counts: pd.DataFrame,
     numerical_stats: pd.DataFrame,
     anual_summary: pd.DataFrame,
-    quarterly_summary: pd.DataFrame
+    quarterly_summary: pd.DataFrame,
+    segment_profit: pd.DataFrame,
+    channel_profit: pd.DataFrame,
+    location_profit: pd.DataFrame,
 ):
     """
     Function to generate a summary of the sales data.
@@ -26,6 +29,9 @@ def generate_summary(
         numerical_stats (pd.DataFrame): DataFrame with numerical statistics.
         anual_summary (pd.DataFrame): DataFrame with annual summary statistics.
         quarterly_summary (pd.DataFrame): DataFrame with quarterly summary statistics.
+        segment_profit (pd.DataFrame): DataFrame with profits by segment.
+        channel_profit (pd.DataFrame): DataFrame with profits by channel.
+        location_profit (pd.DataFrame): DataFrame with profits by location.
     """
     return [
         {
@@ -39,6 +45,11 @@ def generate_summary(
                 'Sede'].to_dict(),
             "Top 5 Vendedores con más ventas realizadas": top_counts[
                 'Vendedor'].to_dict(),
+        },
+        {
+            "Ganancias por Segmento": segment_profit,
+            "Ganancias por Canal": channel_profit,
+            "Ganancias por Sede": location_profit,
         },
         {
             "Estadísticas numéricas": numerical_stats.to_dict(),

@@ -89,9 +89,21 @@ def analyze_sales_data(sales_xlsx: str = SALES_XLSX):
     for column, counts in columns_counts.items():
         top_counts[column] = counts.head(5)
 
+    # Generate the profits per segment
+    segment_profit = data.groupby('Segmento')['Ganancia por Venta'].sum().sort_values(ascending=False)
+
+    # Generate the profits per channel
+    channel_profit = data.groupby('Canal')['Ganancia por Venta'].sum().sort_values(ascending=False)
+
+    # Generate the profits per location
+    location_profit = data.groupby('Sede')['Ganancia por Venta'].sum().sort_values(ascending=False)
+
     return [
         segment_counts,
         top_counts,
+        segment_profit,
+        channel_profit,
+        location_profit,
         numerical_stats,
         anual_summary,
         quarterly_summary

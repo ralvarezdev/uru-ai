@@ -23,14 +23,19 @@ if __name__ == '__main__':
 
     # Generate PDF report
     (segment_counts, top_counts, numerical_stats, anual_summary,
-     quarterly_summary) = analyze_sales_data()
+     quarterly_summary, segment_profit, channel_profit, location_profit,
+     ) = analyze_sales_data()
 
     summary = generate_summary(
         segment_counts,
         top_counts,
+        segment_profit,
+        channel_profit,
+        location_profit,
         numerical_stats,
         anual_summary,
-        quarterly_summary
+        quarterly_summary,
+
     )
     generate_pdf("sales_report.pdf", summary)
 
@@ -42,7 +47,7 @@ if __name__ == '__main__':
 
     # Generate the proxy URL for the PDF
     proxy_url = f"{proxy_server_url}/proxy?server={server}&file_id={file_id}&filename={filename}"
-    print(proxy_url)
+    #print(proxy_url)
 
     # Send a WhatsApp message
     message = client.send_whatsapp_message(
@@ -50,5 +55,5 @@ if __name__ == '__main__':
         twilio_to_phone_number,
         "¡Hola!, el reporte de ventas ha sido generado y está disponible en "
         "el siguiente enlace: " + page_link,
-        media_url=proxy_url
+        #media_url=proxy_url
     )
