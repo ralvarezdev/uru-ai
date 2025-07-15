@@ -10,11 +10,19 @@ def upload_to_gofile(file_path):
         file_path (str): The path to the file to be uploaded.
 
     Returns:
-        str: The download link for the uploaded file.
+        list: A list containing the page link and direct download link.
     """
     with open(file_path, 'rb') as f:
         response = requests.post(
             'https://upload.gofile.io/uploadfile',
             files={'file': f}
-        )
-    return response.json()['data']['downloadPage']
+        ).json()
+
+    if response['status'] == 'ok':
+        data = response['data']
+        page_link = data['downloadPage']
+        direct_link = (f"https://{data['servers'][0]}.gofile.io/download/"
+                       f"{data['id']}/{data['name']}")
+        return [page_link, direct_link]
+    else:
+        raise Exception(f"Upload failed: {response}")
