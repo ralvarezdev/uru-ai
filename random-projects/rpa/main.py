@@ -35,7 +35,6 @@ if __name__ == '__main__':
         numerical_stats,
         anual_summary,
         quarterly_summary,
-
     )
     generate_pdf("sales_report.pdf", summary)
 

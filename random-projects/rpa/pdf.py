@@ -1,3 +1,5 @@
+from typing import Literal
+
 from fpdf import FPDF
 
 from constants import (
@@ -21,8 +23,8 @@ class PDF:
 
     def __init__(
         self,
-        unit: str = PDF_MM_UNIT,
-        format: str = PDF_FORMAT,
+        unit: Literal["pt", "mm", "cm", "in"] | float = PDF_MM_UNIT,
+        page_format: Literal["", "a3", "A3", "a4", "A4", "a5", "A5", "letter", "Letter", "legal", "Legal"] | tuple[float, float] = PDF_FORMAT,
         margin_mm: float = PDF_MARGIN_MM,
         tabs_white_space: int = PDF_TAB_WHITE_SPACE,
         line_height: float = LINE_HEIGHT
@@ -31,15 +33,15 @@ class PDF:
         Initialize the PDF document with a specified format.
 
         Args:
-            unit (str): The unit of measurement for the PDF document.
-            format (str): The format of the PDF document.
+            unit (Literal["pt", "mm", "cm", "in"] | float): The unit of measurement for the PDF document.
+            page_format (Literal["", "a3", "A3", "a4", "A4", "a5", "A5", "letter", "Letter", "legal", "Legal"] | tuple[float, float]): The format of the PDF document.
             margin_mm (float): The margin in millimeters for the PDF document.
             tabs_white_space (int): The number of whitespaces per tab.
         """
         self.__unit = unit
         self.__tabs_white_space = tabs_white_space
         self.__line_height = line_height
-        self.pdf = FPDF(unit=unit, format=format)
+        self.pdf = FPDF(unit=unit, format=page_format)
         self.pdf.set_auto_page_break(auto=True, margin=margin_mm)
         self.pdf.set_margins(left=margin_mm, top=margin_mm, right=margin_mm)
 
@@ -362,7 +364,7 @@ class PDF:
     def add_font(
         self,
         family: str,
-        style: str = '',
+        style: Literal["", "B", "I"] = '',
         filename: str = '',
         uni: bool = False,
         set_as_main: bool = False
@@ -372,7 +374,7 @@ class PDF:
 
         Args:
             family (str): The font family name.
-            style (str): The font style (e.g., 'B' for bold).
+            style (Literal["", "B", "I"]): The font style (e.g., 'B' for bold).
             filename (str): The path to the font file.
             uni (bool): Whether to use Unicode encoding.
             set_as_main (bool): Whether to set this font as the main regular or bold font.
@@ -390,7 +392,7 @@ class PDF:
     def set_font(
         self,
         family: str,
-        style: str = '',
+        style: Literal["", "B", "I", "U", "BU", "UB", "BI", "IB", "IU", "UI", "BIU", "BUI", "IBU", "IUB", "UBI", "UIB"] = '',
         size: int = TEXT_SIZE_PT,
         unit: str = PDF_PT_UNIT,
     ):
@@ -399,11 +401,11 @@ class PDF:
 
         Args:
             family (str): The font family name.
-            style (str): The font style (e.g., 'B' for bold).
+            style (Literal["", "B", "I", "U", "BU", "UB", "BI", "IB", "IU", "UI", "BIU", "BUI", "IBU", "IUB", "UBI", "UIB"]): The font style.
             size (int): The font size.
             unit (str): The unit of the font size.
         """
-        size_pt = self._convert_unit_to_pt(size, unit)
+        size_pt = int(self._convert_unit_to_pt(size, unit))
         self.__current_font_size = size_pt
         self.pdf.set_font(family, style, size_pt)
 
@@ -461,8 +463,8 @@ class PDF:
         height: float = 0,
         unit: str = PDF_PT_UNIT,
         txt: str = '',
-        border: int = 0,
-        ln: int = 0,
+        border: Literal[0, 1] | bool | str = 0,
+        newline: bool = False,
         align: str = '',
         fill: bool = False
     ):
@@ -472,9 +474,10 @@ class PDF:
         Args:
             width (float): The width of the cell.
             height (float): The height of the cell.
+            unit (str): The unit of the width and height.
             txt (str): The text to display in the cell.
-            border (int): Border style of the cell.
-            ln (int): Line break after the cell.
+            border (Literal[0, 1] | bool | str): Border style of the cell.
+            newline (bool): Line break after the cell.
             align (str): Text alignment within the cell.
             fill (bool): Whether to fill the cell background.
         """
@@ -485,28 +488,29 @@ class PDF:
         self.pdf.cell(
             w=width,
             h=height * self.__line_height,
-            txt=txt,
+            text=txt,
             border=border,
-            ln=ln,
             align=align,
             fill=fill
         )
 
+        if newline:
+            self.newline()
+
     def multi_cell(
         self,
         txt: str = '',
-        border: int = 0,
+        border: Literal[0, 1] | bool | str = 0,
         align: str = '',
         fill: bool = False,
         tabs: int|None = None,
-        newline: bool = True
     ):
         """
         Add a multi-cell to the PDF document.
 
         Args:
             txt (str): The text to display.
-            border (int): Border style of the text.
+            border (Literal[0, 1] | bool | str): Border style of the text.
             align (str): Text alignment.
             fill (bool): Whether to fill the background.
             tabs (int|None): Optional tabs for text alignment.
@@ -527,43 +531,39 @@ class PDF:
         self.pdf.multi_cell(
             w=0,
             h=height * self.__line_height,
-            txt=tabs_str + txt if tabs_str else txt,
+            text=tabs_str + txt if tabs_str else txt,
             border=border,
             align=align,
             fill=fill
         )
-
-        if newline:
-            self.newline()
+        self.newline()
 
     def text(
         self,
         txt: str = '',
-        border: int = 0,
+        border: Literal[0, 1] | bool | str = 0,
         align: str = '',
         fill: bool = False,
         tabs: int|None = None,
-        newline: bool = True
     ):
         """
         Add text to the PDF document.
 
         Args:
             txt (str): The text to display.
-            border (int): Border style of the text.
+            border (Literal[0, 1] | bool | str): Border style of the text.
             align (str): Text alignment.
             fill (bool): Whether to fill the background.
             tabs (int|None): Optional tabs for text alignment.
-            newline (bool): Whether to add a new line after the text.
         """
         if self.__main_regular_font:
             self.set_font(self.__main_regular_font, '', TEXT_SIZE_PT)
-        self.multi_cell(txt, border, align, fill, tabs, newline)
+        self.multi_cell(txt, border, align, fill, tabs)
 
     def h1(
         self,
         txt: str = '',
-        border: int = 0,
+        border: Literal[0, 1] | bool | str = 0,
         align: str = '',
         fill: bool = False,
         tabs: int|None = None
@@ -573,7 +573,7 @@ class PDF:
 
         Args:
             txt (str): The text of the heading.
-            border (int): Border style of the heading.
+            border (Literal[0, 1] | bool | str): Border style of the heading.
             align (str): Text alignment.
             fill (bool): Whether to fill the background.
             tabs (int|None): Optional tabs for text alignment.
@@ -585,7 +585,7 @@ class PDF:
     def h2(
         self,
         txt: str = '',
-        border: int = 0,
+        border: Literal[0, 1] | bool | str = 0,
         align: str = '',
         fill: bool = False,
         tabs: int|None = None
@@ -595,7 +595,7 @@ class PDF:
 
         Args:
             txt (str): The text of the heading.
-            border (int): Border style of the heading.
+            border (Literal[0, 1] | bool | str): Border style of the heading.
             align (str): Text alignment.
             fill (bool): Whether to fill the background.
             tabs (int|None): Optional tabs for text alignment.
@@ -607,7 +607,7 @@ class PDF:
     def h3(
         self,
         txt: str = '',
-        border: int = 0,
+        border: Literal[0, 1] | bool | str = 0,
         align: str = '',
         fill: bool = False,
         tabs: int|None = 1
@@ -617,7 +617,7 @@ class PDF:
 
         Args:
             txt (str): The text of the heading.
-            border (int): Border style of the heading.
+            border (Literal[0, 1] | bool | str): Border style of the heading.
             align (str): Text alignment.
             fill (bool): Whether to fill the background.
             tabs (int|None): Optional tabs for text alignment.

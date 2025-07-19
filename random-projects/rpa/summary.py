@@ -97,11 +97,10 @@ def generate_pdf(
                 if isinstance(value, dict):
                     pdf.h3(key)
                     for sub_key, sub_value in value.items():
-                        pdf.text(f"{sub_key}: {sub_value}", tabs=2,
-                                 newline=False)
+                        pdf.text(f"{sub_key}: {sub_value}", tabs=2)
                     pdf.newline()
                 else:
-                    pdf.text(f"{key}: {value}", tabs=1, newline=False)
+                    pdf.text(f"{key}: {value}", tabs=1)
             pdf.newline()
 
         if idx < len(summary) - 1:
